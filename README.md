@@ -22,6 +22,8 @@ FUML (acronym for **Fu**nctional **M**inimal **L**anguage) is a data serializati
     * Tuple
     * Record
     * Algebraic Data Type
+    * Option
+    * Result
 
 ### Boolean
 * Boolean values are either `true` or `false` (all lowercase). Example:
@@ -139,3 +141,69 @@ This should be equivalent to the following single-line string:
 ```
     * If `join character` is a single quote `'`, escape it via `\`.
 
+### Array
+
+* Arrays are a list of values having the same data type. Example:
+```fuml
+[1, 2, 3]
+```
+
+Corresponding schema:
+```fuml
+<schema>
+
+result: int array
+```
+    * Values in array, if on the same line, are separated by comma.
+    * Space between comma is not required, but recommended.
+    * Array types are written in postfix notation. `int array` is equivalent to `List<Integer>` in Java.
+
+* Array elements can also be written in separate lines:
+```fuml
+[
+    1
+    2
+    3
+]
+```
+* You can mix-and-match separating values via comma and writing them in new lines:
+```fuml
+[
+    1, 2
+    3, 4
+    5,6
+]
+```
+
+### Tuple
+
+### Map
+
+* Maps are a list of key-value pair. Key and value may have different datatypes, but must be the same across all pairs in the map. Example:
+```fuml
+'Thousand' => 1_000
+'Million' => 1_000_000
+```
+
+Corresponding schema:
+```fuml
+<schema>
+
+result: (string * int) map
+```
+    * Map pairs are represented as `<key> => <value>`
+    * Pairs are modeled as tuples, hence the data type above for each pair is (string * int)
+
+* Difference between a map and an array of pairs as above is that in a map, duplicate keys are not allowed. Thus, the following should throw an error:
+```fuml
+'Thousand' => 1_000
+'Thousand' => 1_000_000
+```
+
+### Record
+
+### Algebraic Data Type
+
+### Option
+
+### Result
