@@ -1,7 +1,7 @@
 # FUML
 FUML (acronym for **Fu**nctional **M**inimal **L**anguage) is a data serialization language inspired from functional programming languages like F# and OCaml. It also borrows some ideas from TOML and YAML.
 
-## Goals
+# Goals
 
 * FUML should be easily readable by humans
 * FUML should strive to use as less number of keystrokes as possible.
@@ -9,7 +9,7 @@ FUML (acronym for **Fu**nctional **M**inimal **L**anguage) is a data serializati
 * FUML should use common data types used in functional programming languages
 * FUML should be portable between different types of programming languages.
 
-## Specs
+# Specs
 
 * FUML documents can be thought to be an instance of a type.
 * Following types are allowed in FUML:
@@ -24,6 +24,8 @@ FUML (acronym for **Fu**nctional **M**inimal **L**anguage) is a data serializati
     * Algebraic Data Type
     * Option
     * Result
+
+## Types
 
 ### Boolean
 * Boolean values are either `true` or `false` (all lowercase). Example:
@@ -202,8 +204,73 @@ result: (string * int) map
 
 ### Record
 
+* Records. Example:
+```fuml
+name = 'Sumeet Das'
+username = 'sumeetdas'
+```
+
+Corresponding schema:
+```fuml
+<schema>
+
+type GithubUser =
+    name: string
+    username: string
+
+result: GithubUser
+```
+
+* Some property names aren't just names; they are sentences. You can use round brackets `(` and `)` to use sentences as field names:
+```fuml
+username: 'sumeetdas'
+(has the username completed the course?): true
+```
+    * Such field names can also include special characters like `?`
+    * You can use round brackets `(` and `)` here via escaping them using `\`
+
+* You can directly assign nested property values:
+```fuml
+fruits.apple.(weight in grams) = 85
+```
+    * If the nested property does not exist, it should result in an error.
+
+* Nested records. Example:
+```fuml
+name = 'Sumeet Das'
+username = 'sumeetdas'
+stats = 
+    (number of projects) = 10
+    (number of followers) = 20
+    stars = 30
+```
+
+Corresponding schema:
+```fuml
+<schema>
+
+type GithubStats = 
+    (number of projects): int
+    (number of followers): int
+    stars: int
+
+type GithubUser = 
+    name: string
+    username: string
+    stats: GithubStats
+
+result: GithubUser
+```
+
+
 ### Algebraic Data Type
+
+* 
 
 ### Option
 
+* 
+
 ### Result
+
+* 
