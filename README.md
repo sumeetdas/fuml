@@ -12,20 +12,21 @@ FUML (acronym for **Fu**nctional **M**inimal **L**anguage) is a data serializati
 # Specs
 
 * FUML documents can be thought to be an instance of a type.
-* Following types are allowed in FUML:
-    * Boolean
-    * Integer
-    * Float
-    * String
-    * Array
-    * Map
-    * Tuple
-    * Record
-    * Algebraic Data Type
-    * Option
-    * Result
 
 ## Types
+
+Following types are allowed in FUML:
+* Boolean
+* Integer
+* Float
+* String
+* Array
+* Map
+* Tuple
+* Record
+* Algebraic Data Type
+* Option
+* Result
 
 ### Boolean
 * Boolean values are either `true` or `false` (all lowercase). Example:
@@ -196,10 +197,15 @@ result: (string * int) map
     * Map pairs are represented as `<key> => <value>`
     * Pairs are modeled as tuples, hence the data type above for each pair is (string * int)
 
-* Difference between a map and an array of pairs as above is that in a map, duplicate keys are not allowed. Thus, the following should throw an error:
+* Difference between a map of key-value (KV) pairs and an array of KV pairs is that in a map, duplicate keys are not allowed. Thus, the following should throw an error:
 ```fuml
 'Thousand' => 1_000
 'Thousand' => 1_000_000
+```
+
+* Maps can also be written in compact form as below:
+```fuml
+{'Thousand'=>1_000;'Million'=>1_000_000}
 ```
 
 ### Record
@@ -221,10 +227,15 @@ type GithubUser =
 result: GithubUser
 ```
 
+* Records can also be written in compact form:
+```fuml
+{name='Sumeet Das';username='sumeetdas'}
+```
+
 * Some property names aren't just names; they are sentences. You can use round brackets `(` and `)` to use sentences as field names:
 ```fuml
 username: 'sumeetdas'
-(has the username completed the course?): true
+(has the user completed the course?): true
 ```
     * Such field names can also include special characters like `?`
     * You can use round brackets `(` and `)` here via escaping them using `\`
@@ -262,10 +273,88 @@ type GithubUser =
 result: GithubUser
 ```
 
+* List of records:
+```fuml
+[
+    name = 'Cat'
+    sound = 'meow'
+    ;
+    name = 'Dog'
+    sound = 'woof'
+]
+```
+
+Compact form:
+```fuml
+[{name='Cat';sound='meow'};{name='Dog';sound='woof'}]
+```
+
+Corresponding schema:
+```fuml
+<schema>
+
+type Animal = 
+    name: string
+    sound: string
+
+result: Animal list
+```
+
+* Nested list of records:
+```fuml
+animals = [
+    name = 'Cat'
+    sound = 'meow'
+    ;
+    name = 'Dog'
+    sound = 'woof'
+]
+```
+
+You can also use compact form of records as below:
+```fuml
+animals = [
+    {name = 'Cat'; sound = 'meow'}
+    {name = 'Dog'; sound='woof'}
+]
+```
+    * If one record is written in compact form, others too must follow the same pattern.
+    * Compact form records don't need semicolon `;` in between if they are written in separate lines.
 
 ### Algebraic Data Type
 
-* 
+* Algebraic data types:
+```fuml
+Circle 5
+```
+
+```fuml
+Rectangle (5, 3)
+```
+
+```fuml
+Polygon 
+    numberOfSides = 5
+    sideLengths = [4, 4, 4, 4, 4]
+```
+
+Corresponding schema:
+```fuml
+<schema>
+
+type Sides = 
+    numberOfSides: int
+    sideLengths: int list
+
+type Shape = 
+    | Circle of int
+    // Length * Breadth
+    | Rectangle of int * int
+    | Polygon of Sides
+    | None
+
+result: Shape
+```
 
 ### Option
 
