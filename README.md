@@ -11,22 +11,55 @@ FUML (acronym for **Fu**nctional **M**inimal **L**anguage) is a data serializati
 
 # Specs
 
-* FUML documents can be thought to be an instance of a type.
+## Comments
+
+* You can add single-line comment like so:
+
+```fuml
+// the answer
+42
+```
+
+* You can also add multi-line comments like so:
+
+```fuml
+(*
+    42 is the answer to the “ultimate question of life,
+    the universe, and everything”
+*)
+42
+```
+
+* You can also add both types of comments in the FUML schema:
+
+```fuml
+<schema>
+
+// returns 
+(*
+    the answer to question of life, the universe
+    and everything
+*)
+result: int
+```
 
 ## Types
 
-Following types are allowed in FUML:
-* Boolean
-* Integer
-* Float
-* String
-* Array
-* Map
-* Tuple
-* Record
-* Algebraic Data Type
-* Option
-* Result
+* FUML documents can be thought to be an instance of a type.
+* Following types are allowed in FUML:
+    * Boolean
+    * Integer
+    * Float
+    * String
+    * Array
+    * Map
+    * Tuple
+    * Record
+    * Algebraic Data Type
+    * Option
+    * Result
+    * Date
+    * Type alias
 
 ### Boolean
 * Boolean values are either `true` or `false` (all lowercase). Example:
@@ -179,6 +212,20 @@ result: int array
 ```
 
 ### Tuple
+
+* Tuple. Example:
+
+```fuml
+(2, [ 'apple', 'banana' ], 'fruits')
+```
+
+Corresponding schema:
+
+```fuml
+<schema>
+
+result: int * (string array) * string
+```
 
 ### Map
 
@@ -338,6 +385,10 @@ Polygon
     sideLengths = [4, 4, 4, 4, 4]
 ```
 
+```fuml
+NoShape
+```
+
 Corresponding schema:
 ```fuml
 <schema>
@@ -351,15 +402,94 @@ type Shape =
     // Length * Breadth
     | Rectangle of int * int
     | Polygon of Sides
-    | None
+    | NoShape
 
 result: Shape
 ```
 
+* You can also use one of the algebraic data types:
+
+```fuml
+5
+```
+
+Corresponding schema:
+```fuml
+<schema>
+
+result: Shape.Circle
+```
+    * For types like these, you only need to provide the parameter values. For example, here you only need to specify `5` as the `int` value an instance of `Shape.Circle` type expects.
+
+* A schema must not define any property whose type is an algebraic data type with no parameters. For example, the following is an invalid schema:
+
+```fuml
+<schema>
+
+result: Shape.NoShape
+```
+
+as `NoShape` type expects no parameters and hence is not relevant in a FUML document.
+
 ### Option
 
-* 
+* Option. Example:
+
+```fuml
+None
+```
+
+```fuml
+Some 2
+```
+
+Corresponding schema:
+
+```fuml
+<schema>
+
+result: int option
+```
+
+* You can also drop `Some` and directly write the value. Thus, the following FUML document:
+
+```fuml
+2
+```
+
+would be valid for above schema.
 
 ### Result
 
+* Result. Example:
+
+```fuml
+Ok 5
+```
+
+```fuml
+Error 'error happened'
+```
+
+Corresponding schema:
+
+```fuml
+<schema>
+
+result: (int * string) result
+```
+
+### Date
+
+* Date. Example:
+
+```fuml
+Timestamp ''
+```
+
+### Type alias
+
 * 
+
+
+
