@@ -51,7 +51,7 @@ FUML (acronym for **Fu**nctional **M**inimal **L**anguage) is a data serializati
     * Integer
     * Float
     * String
-    * Array
+    * List
     * Map
     * Tuple
     * Record
@@ -75,7 +75,31 @@ FUML (acronym for **Fu**nctional **M**inimal **L**anguage) is a data serializati
     ```
 
 ### Integer
-* Integers are whole numbers. Example:
+* In FUML, integers are natural numbers. 
+    * Natural numbers are any number (positive or negative) which does not have any fraction part. Thus, `-12` is a natural number while as `12.40` is not.
+* FUML has following data types:
+    * `i8`
+        * Range = -128 to 127
+    * `i16`
+        * Range = -32,768 to 32,767
+    * `i32`
+        * Range = -2,147,483,648 to 2,147,483,647
+    * `i64`
+        * Range = -2^63 to (2^63 - 1)
+    * `i128`
+        * Range = -2^127 to (2^127 - 1)
+    * `u8`
+        * Range = 0 to 255
+    * `u16`
+        * Range = 0 to 65,536
+    * `u32`
+        * Range = 0 to 4,294,967,296
+    * `u64`
+        * Range = 0 to 2^64
+    * `u128`
+        * Range = 0 to 2^128
+
+* Example:
     ```fuml
     2022
     ```
@@ -84,7 +108,19 @@ FUML (acronym for **Fu**nctional **M**inimal **L**anguage) is a data serializati
     ```fuml
     <schema>
 
-    result: integer
+    result: i32
+    ```
+
+* There's also an `int` data type, which is a type alias for `i32`:
+    ```fuml
+    2_147_483_647
+    ```
+
+    Corresponding schema:
+    ```fuml
+    <schema>
+
+    result: int
     ```
 
 * Its optional to add `+` sign before positive integers. Thus, following two FUML documents
@@ -119,15 +155,18 @@ FUML (acronym for **Fu**nctional **M**inimal **L**anguage) is a data serializati
 
     result: float
     ```
+
 * Float can also be represented by integer value followed by exponent:
     ```fuml
     4e12
     ```
     Here, integer value is `4` and exponent is `e12`.
+
 * Integer + fractional part can also precede exponent:
     ```fuml
     4.78e12
     ```
+
 * Float must not be just an integer, or if a decimal point is present, must include both integer and fractional part. Examples of invalid float values:
     * `50`
     * `50.`
@@ -173,30 +212,15 @@ FUML (acronym for **Fu**nctional **M**inimal **L**anguage) is a data serializati
     allowing the value to be represented exactly.
     '''
     ```
-    This should be equivalent to the following single-line string:
+    This will be equivalent to the following single-line string:
     ```fuml
     'For the binary formats, the representation is made+unique by choosing the smallest representable exponent+allowing the value to be represented exactly.'
     ```
     * If `join character` is a single quote `'`, escape it via `\`.
 
-### Array
+### List
 
-* Arrays are a list of values having the same data type. Example:
-    ```fuml
-    [1, 2, 3]
-    ```
-
-    Corresponding schema:
-    ```fuml
-    <schema>
-
-    result: int array
-    ```
-    * Values in array, if on the same line, are separated by comma.
-    * Space between comma is not required, but recommended.
-    * Array types are written in postfix notation. `int array` is equivalent to `List<Integer>` in Java.
-
-* Array elements can also be written in separate lines:
+* Lists are a collection of values having the same data type. Example:
     ```fuml
     [
         1
@@ -204,6 +228,23 @@ FUML (acronym for **Fu**nctional **M**inimal **L**anguage) is a data serializati
         3
     ]
     ```
+
+    Corresponding schema:
+    ```fuml
+    <schema>
+
+    result: int list
+    ```
+    * Space between comma is not required, but recommended.
+    * List types are written in postfix notation. `int list` is equivalent to `List<Integer>` in Java.
+
+* List elements can also be written in compact form as below:
+    ```fuml
+    [1, 2, 3]
+    ```
+
+    * Values in list, if on the same line, are separated by comma.
+
 * You can mix-and-match separating values via comma and writing them in new lines:
     ```fuml
     [
@@ -218,7 +259,19 @@ FUML (acronym for **Fu**nctional **M**inimal **L**anguage) is a data serializati
 * Tuple. Example:
 
     ```fuml
-    (2, [ 'apple', 'banana' ], 'fruits')
+    (
+        2 
+        [ 
+            'apple'
+            'banana' 
+        ]
+        'fruits'
+    )
+    ```
+
+    Compact form:
+    ```fuml
+    (2, ['apple', 'banana'], 'fruits')
     ```
 
     Corresponding schema:
@@ -226,15 +279,17 @@ FUML (acronym for **Fu**nctional **M**inimal **L**anguage) is a data serializati
     ```fuml
     <schema>
 
-    result: int * (string array) * string
+    result: int * (string list) * string
     ```
 
 ### Map
 
 * Maps are a list of key-value pair. Key and value may have different datatypes, but must be the same across all pairs in the map. Example:
     ```fuml
-    'Thousand' => 1_000
-    'Million' => 1_000_000
+    {
+        'Thousand' => 1_000
+        'Million' => 1_000_000
+    }
     ```
 
     Corresponding schema:
@@ -246,7 +301,7 @@ FUML (acronym for **Fu**nctional **M**inimal **L**anguage) is a data serializati
     * Map pairs are represented as `<key> => <value>`
     * Pairs are modeled as tuples, hence the data type above for each pair is (string * int)
 
-* Difference between a map of key-value (KV) pairs and an array of KV pairs is that in a map, duplicate keys are not allowed. Thus, the following should throw an error:
+* Difference between a map of key-value (KV) pairs and an list of KV pairs is that in a map, duplicate keys are not allowed. Thus, the following should throw an error:
     ```fuml
     'Thousand' => 1_000
     'Thousand' => 1_000_000
@@ -509,4 +564,5 @@ FUML (acronym for **Fu**nctional **M**inimal **L**anguage) is a data serializati
     result: User
     ```
 
-* i8, i16, i32 aliased as `int`. 
+* Type aliases must follow CamelCase convention, and the first letter must be uppercase.
+
