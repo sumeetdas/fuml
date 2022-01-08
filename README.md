@@ -40,7 +40,7 @@ FUML (acronym for **Fu**nctional **M**inimal **L**anguage) is a data serializati
         the answer to question of life, the universe
         and everything
     *)
-    result: int
+    data: int
     ```
 
 ## Types
@@ -71,7 +71,7 @@ FUML (acronym for **Fu**nctional **M**inimal **L**anguage) is a data serializati
     ```fuml
     <schema>
 
-    result: bool
+    data: bool
     ```
 
 ### Integer
@@ -108,7 +108,7 @@ FUML (acronym for **Fu**nctional **M**inimal **L**anguage) is a data serializati
     ```fuml
     <schema>
 
-    result: i32
+    data: i32
     ```
 
 * There's also an `int` data type, which is a type alias for `i32`:
@@ -120,7 +120,7 @@ FUML (acronym for **Fu**nctional **M**inimal **L**anguage) is a data serializati
     ```fuml
     <schema>
 
-    result: int
+    data: int
     ```
 
 * Its optional to add `+` sign before positive integers. Thus, following two FUML documents
@@ -153,7 +153,7 @@ FUML (acronym for **Fu**nctional **M**inimal **L**anguage) is a data serializati
     ```fuml
     <schema>
 
-    result: float
+    data: float
     ```
 
 * Float can also be represented by integer value followed by exponent:
@@ -182,7 +182,7 @@ FUML (acronym for **Fu**nctional **M**inimal **L**anguage) is a data serializati
     ```fuml
     <schema>
 
-    result: string
+    data: string
     ```
 
 * Escape single quotes and other special characters using `\`:
@@ -233,7 +233,7 @@ FUML (acronym for **Fu**nctional **M**inimal **L**anguage) is a data serializati
     ```fuml
     <schema>
 
-    result: int list
+    data: int list
     ```
     * Space between comma is not required, but recommended.
     * List types are written in postfix notation. `int list` is equivalent to `List<Integer>` in Java.
@@ -279,7 +279,7 @@ FUML (acronym for **Fu**nctional **M**inimal **L**anguage) is a data serializati
     ```fuml
     <schema>
 
-    result: int * (string list) * string
+    data: int * (string list) * string
     ```
 
 ### Map
@@ -296,15 +296,25 @@ FUML (acronym for **Fu**nctional **M**inimal **L**anguage) is a data serializati
     ```fuml
     <schema>
 
-    result: (string * int) map
+    data: (string * int) map
     ```
     * Map pairs are represented as `<key> => <value>`
     * Pairs are modeled as tuples, hence the data type above for each pair is (string * int)
 
-* Difference between a map of key-value (KV) pairs and an list of KV pairs is that in a map, duplicate keys are not allowed. Thus, the following should throw an error:
+* Only integer, float and string data types are allowed for map keys. Using any other data type should throw an error.
+
+* Difference between a map of key-value pairs and a similar list of pairs is that in a map, duplicate keys are not allowed. Thus, the following should throw an error:
     ```fuml
     'Thousand' => 1_000
     'Thousand' => 1_000_000
+    ```
+
+    while as this is allowed in a list:
+    ```fuml
+    [
+        ('Thousand', 1_000)
+        ('Thousand', 1_000_000)
+    ]
     ```
 
 * Maps can also be written in compact form as below:
@@ -328,7 +338,7 @@ FUML (acronym for **Fu**nctional **M**inimal **L**anguage) is a data serializati
         name: string
         username: string
 
-    result: GithubUser
+    data: GithubUser
     ```
 
 * Records can also be written in compact form:
@@ -376,7 +386,7 @@ FUML (acronym for **Fu**nctional **M**inimal **L**anguage) is a data serializati
         username: string
         stats: GithubStats
 
-    result: GithubUser
+    data: GithubUser
     ```
 
 * List of records:
@@ -403,7 +413,7 @@ FUML (acronym for **Fu**nctional **M**inimal **L**anguage) is a data serializati
         name: string
         sound: string
 
-    result: Animal list
+    data: Animal list
     ```
 
 * Nested list of records:
@@ -426,6 +436,21 @@ FUML (acronym for **Fu**nctional **M**inimal **L**anguage) is a data serializati
     ```
     * If one record is written in compact form, others too must follow the same pattern.
     * Compact form records don't need semicolon `;` in between if they are written in separate lines.
+
+* Map to a record:
+    ```fuml
+    'Cat' => 
+        family = 'Felidae'
+        sound = 'meow'
+    'Dog' => 
+        family = 'Canidae'
+        sound = 'woof'
+    ```
+
+    Compact form:
+    ```
+    {'Cat' => {family='Felidae';sound='meow'};'Dog'=>{family='Canidae' ; sound = 'woof'}}
+    ```
 
 ### Algebraic Data Type
 
@@ -463,7 +488,7 @@ FUML (acronym for **Fu**nctional **M**inimal **L**anguage) is a data serializati
         | Polygon of Sides
         | NoShape
 
-    result: Shape
+    data: Shape
     ```
 
 * You can also use one of the algebraic data types:
@@ -476,19 +501,39 @@ FUML (acronym for **Fu**nctional **M**inimal **L**anguage) is a data serializati
     ```fuml
     <schema>
 
-    result: Shape.Circle
+    data: Shape.Circle
     ```
     * For types like these, you only need to provide the parameter values. For example, here you only need to specify `5` as the `int` value an instance of `Shape.Circle` type expects.
+    * Sum types in algebraic data types (e.g. `Circle` and `Rectangle` in `Shape` data type), if used as a data type for a property, requires fully qualified name. For example, you cannot use `Circle` type as follows:
+        ```fuml
+        <schema>
+
+        type Shape = 
+            | Circle of int
+
+        data: Circle
+        ```
+    * Instead, the correct way to use `Circle` type is to use its fully qualified name `Shape.Circle`:
+        ```fuml
+        <schema>
+
+        //.. 
+
+        data: Shape.Circle
+        ```
 
 * A schema must not define any property whose type is an algebraic data type with no parameters. For example, the following is an invalid schema:
 
     ```fuml
     <schema>
 
-    result: Shape.NoShape
+    type Shape =
+        | NoShape
+
+    data: Shape.NoShape
     ```
 
-    as `NoShape` type expects no parameters and hence is not relevant in a FUML document.
+    as `NoShape` type expects no parameters and hence makes no sense to use it as a data type.
 
 ### Option
 
@@ -507,7 +552,7 @@ FUML (acronym for **Fu**nctional **M**inimal **L**anguage) is a data serializati
     ```fuml
     <schema>
 
-    result: int option
+    data: int option
     ```
 
 * You can also drop `Some` and directly write the value. Thus, the following FUML document:
@@ -535,7 +580,7 @@ FUML (acronym for **Fu**nctional **M**inimal **L**anguage) is a data serializati
     ```fuml
     <schema>
 
-    result: (int * string) result
+    data: (int * string) result
     ```
 
 ### Date
@@ -561,8 +606,32 @@ FUML (acronym for **Fu**nctional **M**inimal **L**anguage) is a data serializati
     // type alias
     type User = int * string
 
-    result: User
+    data: User
     ```
 
-* Type aliases must follow CamelCase convention, and the first letter must be uppercase.
+* FUML recommendations for naming type aliases:
+    * It should follow CamelCase convention
+    * The first letter should be uppercase
+* Type alias definition must be in a single line. The following is invalid:
+    ```fuml
+    <schema>
+
+    // invalid; should throw an error
+    type User =     
+        int * string
+    ```
+* You cannot name a type alias as any one of the lowercase pre-defined types:
+    * any of the integer types like `int` and `i64`
+    * `float`
+    * `string`
+    * `map`
+    * `list`
+    * `option`
+
+    So, the following would result in an error:
+    ```fuml
+    <schema>
+
+    type list = i32
+    ```
 
