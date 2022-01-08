@@ -4,9 +4,9 @@ FUML (acronym for **Fu**nctional **M**inimal **L**anguage) is a data serializati
 # Goals
 
 * FUML should be easily readable by humans
-* FUML should strive to use as less number of keystrokes as possible.
+* FUML should be easy to type.
 * FUML must be backed by a schema
-* FUML should use common data types used in functional programming languages
+* FUML should support common data types used in functional programming languages
 * FUML should be portable between different types of programming languages.
 
 # Specs
@@ -256,20 +256,8 @@ FUML (acronym for **Fu**nctional **M**inimal **L**anguage) is a data serializati
 
 ### Tuple
 
-* Tuple. Example:
+* Tuples are data types which can store multiple types of data in a specific order. Example:
 
-    ```fuml
-    (
-        2 
-        [ 
-            'apple'
-            'banana' 
-        ]
-        'fruits'
-    )
-    ```
-
-    Compact form:
     ```fuml
     (2, ['apple', 'banana'], 'fruits')
     ```
@@ -281,6 +269,12 @@ FUML (acronym for **Fu**nctional **M**inimal **L**anguage) is a data serializati
 
     data: int * (string list) * string
     ```
+
+* Tuple values are seperated by a comma `,` and are enclosed within a pair of round brackets `(` and `)`.
+
+* Tuples must be written in a single line. 
+    * If the tuple size goes big, then you should consider modeling the data as a record which allows for a more readable format. 
+    * Record also allows you to name the values, something which is not possible in a tuple.
 
 ### Map
 
@@ -346,7 +340,7 @@ FUML (acronym for **Fu**nctional **M**inimal **L**anguage) is a data serializati
     {name='Sumeet Das';username='sumeetdas'}
     ```
 
-* Some property names aren't just names; they are sentences. You can use round brackets `(` and `)` to use sentences as field names:
+* Some property names aren't just names; they are sentences. You can use round brackets `(` and `)` to use sentences as property names:
     ```fuml
     username: 'sumeetdas'
     (has the user completed the course?): true
@@ -612,6 +606,7 @@ FUML (acronym for **Fu**nctional **M**inimal **L**anguage) is a data serializati
 * FUML recommendations for naming type aliases:
     * It should follow CamelCase convention
     * The first letter should be uppercase
+
 * Type alias definition must be in a single line. The following is invalid:
     ```fuml
     <schema>
@@ -620,6 +615,7 @@ FUML (acronym for **Fu**nctional **M**inimal **L**anguage) is a data serializati
     type User =     
         int * string
     ```
+    
 * You cannot name a type alias as any one of the lowercase pre-defined types:
     * any of the integer types like `int` and `i64`
     * `float`
@@ -635,3 +631,76 @@ FUML (acronym for **Fu**nctional **M**inimal **L**anguage) is a data serializati
     type list = i32
     ```
 
+* If there are two type alias definitions, the latest definition would be considered. Example:
+    ```fuml
+    <schema>
+
+    type WholeNumber = i8
+
+    type WholeNumber = i32
+    ```
+
+    Here, `WholeNumber` would be a type alias for `i32`.
+
+    * One corollary of this rule is that you can define a type alias named `Date`. This would effectively replace the existing `Date` algebraic type with the new type alias. For example:
+    ```fuml
+    <schema>
+
+    type Date = string
+    ```
+
+    would make `Date` an alias of type `string`.
+
+## Files and Namespaces
+
+### FUML Files
+
+* Any type of FUML content, be it FUML document or FUML schema, must be stored in files with extension `.fuml`.
+* Schema file names must start with either an underscore (`_`) or an uppercase letter, followed by any number of uppercase letters, lowercase letters, underscores and digits. Examples:
+    ```
+    _Schema.fuml
+
+    Schema_123.fuml
+    ```
+
+* Schema files must have the tag `<schema>` at the beginning of the file. Example:
+    ```fuml
+    <schema>
+
+    type User = 
+        name: string
+        username: string
+
+    // ...
+    ```
+
+* Every schema file must end with `data: <type-name>`.
+
+### FUML Namespaces
+
+* FUML schema can be split in multiple files. However, all FUML files must be stored under one directory.
+* Typical folder tree involving large number of FUML schemas might look the following:
+    ```sh
+    <base-directory>
+    |
+    |--- base.fuml (optional)
+    |--- SchemaA.fuml
+    |--- SchemaB.fuml
+    |--- ModuleA
+        |--- SchemaC.fuml
+        |--- SchemaD.fuml
+    |--- ModuleB
+        |--- SchemaE.fuml
+        |--- SchemaF.fuml
+    ```
+
+* Directories inside `<base-directory>` are called **Namespaces**. 
+    * They are used to group similar schema files together. 
+    * They also allow using schemas with same name by storing them under different namespaces.
+
+    For example, consider you want to store Twitter and Github user data, and would want to create schema named `User.fuml` to model it. Since you cannot store two files named `User.fuml` in a single directory, you create two namespaces `Twitter` and `Github` and create `User.fuml` schema in each namespace.
+
+
+# License
+
+MIT License, Copyright (c) 2022 Sumeet Das
