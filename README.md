@@ -297,9 +297,9 @@ FUML (acronym for **Fu**nctional **M**inimal **L**anguage) is a data serializati
     * Map pairs are represented as `<key> => <value>`
     * Pairs are modeled as tuples, hence the data type above for each pair is (string * int)
 
-* Only integer, float and string data types are allowed for map keys. Using any other data type should throw an error.
+* Only integer, float and string data types are allowed for map keys. Using any other data type should throw a compilation error.
 
-* Difference between a map of key-value pairs and a similar list of pairs is that in a map, duplicate keys are not allowed. Thus, the following should throw an error:
+* Difference between a map of key-value pairs and a similar list of pairs is that in a map, duplicate keys are not allowed. Thus, the following should throw an error during deserialization:
     ```fuml
     'Thousand' => 1_000
     'Thousand' => 1_000_000
@@ -360,7 +360,7 @@ FUML (acronym for **Fu**nctional **M**inimal **L**anguage) is a data serializati
     fruits.apple.(weight in grams) = 85
     ```
 
-    * If the nested property does not exist, it should result in an error.
+    * If the nested property does not exist, it should result in an error during deserialization.
 
 * Nested records. Example:
     ```fuml
@@ -451,6 +451,8 @@ FUML (acronym for **Fu**nctional **M**inimal **L**anguage) is a data serializati
     ```
     {'Cat' => {family='Felidae';sound='meow'};'Dog'=>{family='Canidae' ; sound = 'woof'}}
     ```
+
+###
 
 ### Sum Type
 
@@ -640,7 +642,7 @@ To implement it, you can define `Shape` as a sum type:
         | LocalTimeWithFraction of string
     ```
 
-* Using incorrect date or time format with a given Format type must throw an error. For example, the following will result in an error:
+* Using incorrect date or time format with a given Format type must throw an error during deserialization. For example, the following will result in an error:
     ```fuml
     UtcDateTime '1996-12-19'
     ```
@@ -695,7 +697,7 @@ For example, if you want to use OffsetDateTime as the format, you can do so as f
     ```fuml
     <schema>
 
-    // invalid; should throw an error
+    // invalid; should throw a compilation error
     type User =     
         int * string
     ```
@@ -707,7 +709,7 @@ For example, if you want to use OffsetDateTime as the format, you can do so as f
     * `map`
     * `list`
 
-    So, the following would result in an error:
+    So, the following would result in a compilation error:
     ```fuml
     <schema>
 
@@ -825,7 +827,7 @@ For example, if `SchemaB` is a schema stored in `SchemaB.fuml` file, and `Schema
     compile 'ComplexType'
     ```
 
-* If the schemas are not compiled before importing them, then it would result in an error.
+* If the schemas are not compiled before importing them, then it would result in a compilation error.
 
 * Namespace schemas will still be referenced using their fully qualified names (e.g. `NamespaceA.SchemaC`) as opposed to using just their names (e.g. `SchemaC`) when used as a property's data type.
 
