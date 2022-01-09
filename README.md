@@ -295,9 +295,9 @@ FUML (acronym for **Fu**nctional **M**inimal **L**anguage) is a data serializati
     data: (string * int) map
     ```
     * Map pairs are represented as `<key> => <value>`
-    * Pairs are modeled as tuples, hence the data type above for each pair is (string * int)
+    * Pairs are modeled as tuples, hence the data type above for each pair is `(string * int)`
 
-* Only integer, float and string data types are allowed for map keys. Using any other data type should throw a compilation error.
+* Only integer, float and string data types are allowed for map keys. Using any other data type should throw a compilation error [TODO: subject to change].
 
 * Difference between a map of key-value pairs and a similar list of pairs is that in a map, duplicate keys are not allowed. Thus, the following should throw an error during deserialization:
     ```fuml
@@ -452,7 +452,38 @@ FUML (acronym for **Fu**nctional **M**inimal **L**anguage) is a data serializati
     {'Cat' => {family='Felidae';sound='meow'};'Dog'=>{family='Canidae' ; sound = 'woof'}}
     ```
 
-###
+#### Generic records
+
+* If a record type uses generic types, then such a type is called generic record type. For example, if you want to create a type `Pair` for storing two different types of value, you can define it as:
+    ```fuml
+    <schema>
+
+    type ('x, 'y) Pair = 
+        valueA: 'x
+        valueB: 'y
+    ```
+
+    To use `Pair` type, you need to provide types for `'x` and `'y` generic types:
+
+    ```fuml
+    <schema>
+
+    type CustomType = 
+        propertyA: (int * string) Pair
+        propertyB: (float * int) Pair
+    
+    data: CustomType
+    ```
+
+    One example of FUML document for above schema would be:
+    ```fuml
+    propertyA = 
+        valueA = 12
+        valueB = 'some string'
+    propertyB = 
+        valueA = 4.5
+        valueB = 100
+    ```
 
 ### Sum Type
 
@@ -496,7 +527,6 @@ To implement it, you can define `Shape` as a sum type:
     ```fuml
     NoShape
     ```
-
 
 * FUML recommendations for naming sum types:
     * It should follow CamelCase convention
@@ -545,6 +575,26 @@ To implement it, you can define `Shape` as a sum type:
     ```
 
     as `NoShape` type expects no parameters and hence makes no sense to use it as a data type.
+
+#### Generic Sum Type
+
+* Its also possible to create generic sum type. In fact, the following two types - `Option` and `Result` - are generic sum type.
+
+* To understand generic sum type, let's look at the type definition of `Option` type:
+    ```fuml
+    type 't Option = 
+        | Some of 't
+        | None
+    ```
+    * `'t` is a generic type which must be provided when a property is defined to be an `Option` type.
+    * The generic sum type `Option` can be used as follows:
+        ```fuml
+        <schema>
+
+        type CustomType = 
+            propertyA: int option
+        ```
+    * The above schema defines a property named `propertyA` which is an integer `Option`. This means the property can accept either `Some <integer-value>` or `None`.
 
 ### Option
 
