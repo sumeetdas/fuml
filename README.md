@@ -1,6 +1,8 @@
 # FUML
 FUML (acronym for **Fu**nctional **M**inimal **L**anguage) is a data serialization language inspired from functional programming languages like F# and OCaml. It also borrows some ideas from TOML and YAML.
 
+Data serialization language is a language which can be used to represent data and then can be translated into multiple programming languages. Think of FUML as combination of [Protocol Buffers](https://developers.google.com/protocol-buffers) and [YAML](https://yaml.org/). It prescribes how the data would look like and how to describe the data using [type theory](https://en.wikipedia.org/wiki/Type_theory).
+
 # Goals
 
 * FUML should be easily readable by humans
