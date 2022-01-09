@@ -55,10 +55,10 @@ FUML (acronym for **Fu**nctional **M**inimal **L**anguage) is a data serializati
     * Map
     * Tuple
     * Record
-    * Algebraic Data Type
+    * Sum Type
     * Option
     * Result
-    * Date
+    * DateTime
     * Type alias
 
 ### Boolean
@@ -212,10 +212,12 @@ FUML (acronym for **Fu**nctional **M**inimal **L**anguage) is a data serializati
     allowing the value to be represented exactly.
     '''
     ```
+
     This will be equivalent to the following single-line string:
     ```fuml
     'For the binary formats, the representation is made+unique by choosing the smallest representable exponent+allowing the value to be represented exactly.'
     ```
+
     * If `join character` is a single quote `'`, escape it via `\`.
 
 ### List
@@ -340,6 +342,10 @@ FUML (acronym for **Fu**nctional **M**inimal **L**anguage) is a data serializati
     {name='Sumeet Das';username='sumeetdas'}
     ```
 
+* FUML recommendations for naming record types:
+    * It should follow CamelCase convention
+    * The first letter should be uppercase
+
 * Some property names aren't just names; they are sentences. You can use round brackets `(` and `)` to use sentences as property names:
     ```fuml
     username: 'sumeetdas'
@@ -446,9 +452,31 @@ FUML (acronym for **Fu**nctional **M**inimal **L**anguage) is a data serializati
     {'Cat' => {family='Felidae';sound='meow'};'Dog'=>{family='Canidae' ; sound = 'woof'}}
     ```
 
-### Algebraic Data Type
+### Sum Type
 
-* Algebraic data types:
+* Sum types are data structures that can take on several different, but fixed, types. 
+* To understand it, lets consider the following example - Suppose you want to create a type called `Shape` which can accept instances of different types of shapes like `Circle`, `Rectangle`, `Polygon`. Or if you don't have any shape to store, the type will accept a `NoShape` instance. 
+To implement it, you can define `Shape` as a sum type:
+
+    ```fuml
+    <schema>
+
+    type Sides = 
+        numberOfSides: int
+        sideLengths: int list
+
+    type Shape = 
+        | Circle of int
+        // Length * Breadth
+        | Rectangle of int * int
+        | Polygon of Sides
+        | NoShape
+
+    data: Shape
+    ```
+
+    This schema can accept the following FUML documents, each of which represents an instance of a shape type:
+    
     ```fuml
     Circle 5
     ```
@@ -467,25 +495,12 @@ FUML (acronym for **Fu**nctional **M**inimal **L**anguage) is a data serializati
     NoShape
     ```
 
-    Corresponding schema:
-    ```fuml
-    <schema>
 
-    type Sides = 
-        numberOfSides: int
-        sideLengths: int list
+* FUML recommendations for naming sum types:
+    * It should follow CamelCase convention
+    * The first letter should be uppercase
 
-    type Shape = 
-        | Circle of int
-        // Length * Breadth
-        | Rectangle of int * int
-        | Polygon of Sides
-        | NoShape
-
-    data: Shape
-    ```
-
-* You can also use one of the algebraic data types:
+* You can also use one of the sum types:
 
     ```fuml
     5
@@ -498,7 +513,7 @@ FUML (acronym for **Fu**nctional **M**inimal **L**anguage) is a data serializati
     data: Shape.Circle
     ```
     * For types like these, you only need to provide the parameter values. For example, here you only need to specify `5` as the `int` value an instance of `Shape.Circle` type expects.
-    * Sum types in algebraic data types (e.g. `Circle` and `Rectangle` in `Shape` data type), if used as a data type for a property, requires fully qualified name. For example, you cannot use `Circle` type as follows:
+    * Individual types in sum types (e.g. `Circle` and `Rectangle` in `Shape` data type), if used as a data type for a property, requires fully qualified name. For example, you cannot use `Circle` type as follows:
         ```fuml
         <schema>
 
@@ -516,7 +531,7 @@ FUML (acronym for **Fu**nctional **M**inimal **L**anguage) is a data serializati
         data: Shape.Circle
         ```
 
-* A schema must not define any property whose type is an algebraic data type with no parameters. For example, the following is an invalid schema:
+* A schema must not define any property whose type is a sum type with no parameters. For example, the following is an invalid schema:
 
     ```fuml
     <schema>
@@ -531,7 +546,17 @@ FUML (acronym for **Fu**nctional **M**inimal **L**anguage) is a data serializati
 
 ### Option
 
-* Option. Example:
+* Option is a sum type which is defined as follows:
+    ```fuml
+    type 't Option = 
+        | Some of 't
+        | None
+    ```
+    where `'t` could be any type.
+
+* This data type is useful when you want to model a nullable data. In other words, a property which may or may not have a value.
+
+* Example:
 
     ```fuml
     None
@@ -546,8 +571,13 @@ FUML (acronym for **Fu**nctional **M**inimal **L**anguage) is a data serializati
     ```fuml
     <schema>
 
-    data: int option
+    data: int Option
     ```
+
+    * If the value is present, use `Some <value>`
+    * If the value is not present, use `None`
+
+* This type has `None` as default. If a property is not included in the FUML document, then its value is assumed to be `None`.
 
 * You can also drop `Some` and directly write the value. Thus, the following FUML document:
 
@@ -559,7 +589,16 @@ FUML (acronym for **Fu**nctional **M**inimal **L**anguage) is a data serializati
 
 ### Result
 
-* Result. Example:
+* Result is a sum type which is defined as follows:
+    ```fuml
+    type 'x, 'y Result = 
+        | Ok of 'x
+        | Error of 'y
+    ```
+
+* Result type can be used in cases when you want to return result of an operation if its successful, or an error response in case of failure.
+
+* Example:
 
     ```fuml
     Ok 5
@@ -574,16 +613,61 @@ FUML (acronym for **Fu**nctional **M**inimal **L**anguage) is a data serializati
     ```fuml
     <schema>
 
-    data: (int * string) result
+    data: (int * string) Result
     ```
 
-### Date
+### DateTime
 
-* Date. Example:
-
+* DateTime is a sum type used to represent multiple formats of date and time. DateTime type is defined as:
     ```fuml
-    Timestamp ''
+    type DateTime = 
+        // example: 1985-04-12T23:20:50.123456Z (T can be omitted)
+        | UtcDateTime of string
+
+        // example: 1996-12-19T16:39:57-08:00 (T can be omitted)
+        | OffsetDateTime of string
+
+        // example: 1996-12-19T16:39:57.123456-08:00 (T can be omitted)
+        | OffsetWithFractionDateTime of string
+        
+        // example: 1996-12-19
+        | YearMonthDate of string
+        
+        // example: 07:32:00
+        | LocalTime of string
+
+        // example: 00:32:00.123456
+        | LocalTimeWithFraction of string
     ```
+
+* Using incorrect date or time format with a given Format type must throw an error. For example, the following will result in an error:
+    ```fuml
+    UtcDateTime '1996-12-19'
+    ```
+
+    Corresponding schema:
+    ```fuml
+    <schema>
+
+    data: DateTime
+    ```
+
+* Oftentimes, we don't accept multiple date-time formats. To specify which format to accept, you can use fully qualified name of Format type as the data type. 
+For example, if you want to use OffsetDateTime as the format, you can do so as follows:
+    ```fuml
+    '1996-12-19T16:39:57-08:00'
+    ```
+
+    Corresponding schema:
+    ```fuml
+    <schema>
+
+    data: DateTime.OffsetDateTime
+    ```
+
+    * Using Format data type would allow you to directly use the string containing date and/or time.
+
+* Date and time formats follow the [RFC 3339](https://datatracker.ietf.org/doc/html/rfc3339) specs.
 
 ### Type alias
 
@@ -622,7 +706,6 @@ FUML (acronym for **Fu**nctional **M**inimal **L**anguage) is a data serializati
     * `string`
     * `map`
     * `list`
-    * `option`
 
     So, the following would result in an error:
     ```fuml
@@ -642,14 +725,14 @@ FUML (acronym for **Fu**nctional **M**inimal **L**anguage) is a data serializati
 
     Here, `WholeNumber` would be a type alias for `i32`.
 
-    * One corollary of this rule is that you can define a type alias named `Date`. This would effectively replace the existing `Date` algebraic type with the new type alias. For example:
+    * One corollary of this rule is that you can define a type alias named `DateTime`. This would effectively replace the existing `DateTime` sum type with the new type alias. For example:
     ```fuml
     <schema>
 
-    type Date = string
+    type DateTime = string
     ```
 
-    would make `Date` an alias of type `string`.
+    would make `DateTime` an alias of type `string`.
 
 ## Files and Namespaces
 
@@ -686,20 +769,74 @@ FUML (acronym for **Fu**nctional **M**inimal **L**anguage) is a data serializati
     |--- base.fuml (optional)
     |--- SchemaA.fuml
     |--- SchemaB.fuml
-    |--- ModuleA
+    |--- NamespaceA
         |--- SchemaC.fuml
         |--- SchemaD.fuml
-    |--- ModuleB
+    |--- NamespaceB
         |--- SchemaE.fuml
         |--- SchemaF.fuml
     ```
 
 * Directories inside `<base-directory>` are called **Namespaces**. 
     * They are used to group similar schema files together. 
+
     * They also allow using schemas with same name by storing them under different namespaces.
 
     For example, consider you want to store Twitter and Github user data, and would want to create schema named `User.fuml` to model it. Since you cannot store two files named `User.fuml` in a single directory, you create two namespaces `Twitter` and `Github` and create `User.fuml` schema in each namespace.
 
+    * `<base-directory>` is called as **root namespace**.
+
+* `base.fuml` is a file which contains information about the order in which FUML files need to be compiled. 
+    * If the file is not present, the default order of compilation is recursively compile namespaces in alphabetical order. In each namespace, schema files would be compiled in alphabetical order.
+
+    * To define compile order, use `compile` keyword. 
+    
+    * For example, if you want to compile `NamespaceA` schemas, then `NamespaceB` schemas, followed by `SchemaB.fuml` and `SchemaA.fuml` in root namespace, the `base.fuml` contents would look like:
+        ```fuml
+        compile 'NamespaceB'
+        compile 'NamespaceA'
+        compile 'SchemaB.fuml'
+        compile 'SchemaA.fuml'
+        ```
+
+    * Schemas in `NamespaceB` and `NamespaceA` in the above example would be compiled in alphabetical order. If you want to change the order of compilation for `NamespaceB`, you need to explicitly specify the order for all files in the namespace:
+        ```fuml
+        compile 'NamespaceB.SchemaD.fuml'
+        compile 'NamespaceB.SchemaC.fuml'
+        ```
+
+## Property metadata
+
+* By default, all properties are required (meaning they need to have valid values), except for optional type which has `None` as default.   
+But what if you want to use some default value when a property is missing? To allow that, you can make use of property metadata syntax.
+
+* In FUML schemas, you can provide additional metadata about the property via the following syntax:
+    ```fuml
+    <schema>
+
+    data: i32
+        metadata1 = 2
+        metadata2 = <some value>
+        // ...
+    ```
+
+* Metadata is allowed only for properties having integer, float or string types, or having type as a type alias mapping to one of these three types. 
+
+* Using metadata syntax, you can specify the default value as follows:
+    ```fuml
+    <schema>
+
+    type Fruit = 
+        name: string
+        producer: string
+            default = 'Fruit company'
+        (price per kg): float
+            default = 4.0
+
+    data: Fruit
+    ```
+
+    In this schema, `name` property is required as there's no default value defined for it, while as `producer` and `(price per kg)` properties are optional. If `producer` is missing, its value would be `'Fruit company'`, while as if `(price per kg)` is missing then its value would be `4.0`.
 
 # License
 
