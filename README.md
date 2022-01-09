@@ -476,7 +476,7 @@ To implement it, you can define `Shape` as a sum type:
     ```
 
     This schema can accept the following FUML documents, each of which represents an instance of a shape type:
-    
+
     ```fuml
     Circle 5
     ```
@@ -804,6 +804,30 @@ For example, if you want to use OffsetDateTime as the format, you can do so as f
         compile 'NamespaceB.SchemaD.fuml'
         compile 'NamespaceB.SchemaC.fuml'
         ```
+
+### Import schemas
+
+* Schemas are imported automatically, provided they have been compiled before. 
+For example, if `SchemaB` is a schema stored in `SchemaB.fuml` file, and `SchemaC` is another schema stored in `SchemaC.fuml` file under `NamespaceA` directory, then you can make use of these two schemas directly as follows:
+    ```fuml
+    <schema>
+    type ComplexType = 
+        someProperty: SchemeB
+        anotherProperty: NamespaceA.SchemaC
+
+    data: ComplexType
+    ```
+
+    provided the `base.fuml` file compiles `SchemaB` and `SchemaC` before `ComplexType`:
+    ```fuml
+    compile 'NamespaceA'
+    compile 'SchemaB'
+    compile 'ComplexType'
+    ```
+
+* If the schemas are not compiled before importing them, then it would result in an error.
+
+* Namespace schemas will still be referenced using their fully qualified names (e.g. `NamespaceA.SchemaC`) as opposed to using just their names (e.g. `SchemaC`) when used as a property's data type.
 
 ## Property metadata
 
