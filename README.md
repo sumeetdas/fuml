@@ -173,9 +173,9 @@ FUML (acronym for **Fu**nctional **M**inimal **L**anguage) is a data serializati
     * `.5`
 
 ### Strings
-* Strings comprises of unicode characters, and are enclosed in single quotes. Example:
+* Strings comprises of unicode characters, and are enclosed in double quotes. Example:
     ```fuml
-    'Hello world!'
+    "Hello world!"
     ```
 
     Corresponding schema:
@@ -185,40 +185,40 @@ FUML (acronym for **Fu**nctional **M**inimal **L**anguage) is a data serializati
     data: string
     ```
 
-* Escape single quotes and other special characters using `\`:
+* Escape double quotes and other special characters using `\`:
     ```fuml
-    'Hello, \'Peter\''
+    "Hello, \"Peter\""
     ```
 
-* Multi-line strings must be enclosed within `'''` (triple single quotes):
+* Multi-line strings must be enclosed within `"""` (triple double quotes):
     ```fuml
-    '''
+    """
     This is first sentence.
     This is second sentence.
-    '''
+    """
     ```
-    * Triple quotes `'''` must be in seperate lines. So, following are invalid:
+    * Triple quotes `"""` must be in seperate lines. So, following are invalid:
         ```fuml
-        ''' This is first sentence.
-        This is second sentence. '''
+        """ This is first sentence.
+        This is second sentence. """
         ```
-    * Triple single quotes are not allowed inside multi-line strings.
+    * Triple double quotes are not allowed inside multi-line strings.
 
-* If you have a long sentence that you want to split, you can use `'''` followed by `&'<join character>'`. Example:
+* If you have a long sentence that you want to split, you can use `"""` followed by `&"<join character>"`. Example:
     ```fuml
-    '''&'+'
+    """&"+"
     For the binary formats, the representation is made
     unique by choosing the smallest representable exponent
     allowing the value to be represented exactly.
-    '''
+    """
     ```
 
     This will be equivalent to the following single-line string:
     ```fuml
-    'For the binary formats, the representation is made+unique by choosing the smallest representable exponent+allowing the value to be represented exactly.'
+    "For the binary formats, the representation is made+unique by choosing the smallest representable exponent+allowing the value to be represented exactly."
     ```
 
-    * If `join character` is a single quote `'`, escape it via `\`.
+    * If `join character` is a double quote `"`, escape it via `\`.
 
 ### List
 
@@ -261,7 +261,7 @@ FUML (acronym for **Fu**nctional **M**inimal **L**anguage) is a data serializati
 * Tuples are data types which can store multiple types of data in a specific order. Example:
 
     ```fuml
-    (2, ['apple', 'banana'], 'fruits')
+    (2, ["apple", "banana"], "fruits")
     ```
 
     Corresponding schema:
@@ -283,8 +283,8 @@ FUML (acronym for **Fu**nctional **M**inimal **L**anguage) is a data serializati
 * Maps are a list of key-value pair. Key and value may have different datatypes, but must be the same across all pairs in the map. Example:
     ```fuml
     {
-        'Thousand' => 1_000
-        'Million' => 1_000_000
+        "Thousand" => 1_000
+        "Million" => 1_000_000
     }
     ```
 
@@ -301,29 +301,29 @@ FUML (acronym for **Fu**nctional **M**inimal **L**anguage) is a data serializati
 
 * Difference between a map of key-value pairs and a similar list of pairs is that in a map, duplicate keys are not allowed. Thus, the following should throw an error during deserialization:
     ```fuml
-    'Thousand' => 1_000
-    'Thousand' => 1_000_000
+    "Thousand" => 1_000
+    "Thousand" => 1_000_000
     ```
 
     while as this is allowed in a list:
     ```fuml
     [
-        ('Thousand', 1_000)
-        ('Thousand', 1_000_000)
+        ("Thousand", 1_000)
+        ("Thousand", 1_000_000)
     ]
     ```
 
 * Maps can also be written in compact form as below:
     ```fuml
-    {'Thousand'=>1_000;'Million'=>1_000_000}
+    {"Thousand"=>1_000;"Million"=>1_000_000}
     ```
 
 ### Record
 
 * Records. Example:
     ```fuml
-    name = 'Sumeet Das'
-    username = 'sumeetdas'
+    name = "Sumeet Das"
+    username = "sumeetdas"
     ```
 
     Corresponding schema:
@@ -339,7 +339,7 @@ FUML (acronym for **Fu**nctional **M**inimal **L**anguage) is a data serializati
 
 * Records can also be written in compact form:
     ```fuml
-    {name='Sumeet Das';username='sumeetdas'}
+    {name="Sumeet Das";username="sumeetdas"}
     ```
 
 * FUML recommendations for naming record types:
@@ -348,7 +348,7 @@ FUML (acronym for **Fu**nctional **M**inimal **L**anguage) is a data serializati
 
 * Some property names aren't just names; they are sentences. You can use round brackets `(` and `)` to use sentences as property names:
     ```fuml
-    username: 'sumeetdas'
+    username: "sumeetdas"
     (has the user completed the course?): true
     ```
 
@@ -364,8 +364,8 @@ FUML (acronym for **Fu**nctional **M**inimal **L**anguage) is a data serializati
 
 * Nested records. Example:
     ```fuml
-    name = 'Sumeet Das'
-    username = 'sumeetdas'
+    name = "Sumeet Das"
+    username = "sumeetdas"
     stats = 
         (number of projects) = 10
         (number of followers) = 20
@@ -392,17 +392,17 @@ FUML (acronym for **Fu**nctional **M**inimal **L**anguage) is a data serializati
 * List of records:
     ```fuml
     [
-        name = 'Cat'
-        sound = 'meow'
+        name = "Cat"
+        sound = "meow"
         ;
-        name = 'Dog'
-        sound = 'woof'
+        name = "Dog"
+        sound = "woof"
     ]
     ```
 
     Compact form:
     ```fuml
-    [{name='Cat';sound='meow'};{name='Dog';sound='woof'}]
+    [{name="Cat";sound="meow"};{name="Dog";sound="woof"}]
     ```
 
     Corresponding schema:
@@ -419,19 +419,19 @@ FUML (acronym for **Fu**nctional **M**inimal **L**anguage) is a data serializati
 * Nested list of records:
     ```fuml
     animals = [
-        name = 'Cat'
-        sound = 'meow'
+        name = "Cat"
+        sound = "meow"
         ;
-        name = 'Dog'
-        sound = 'woof'
+        name = "Dog"
+        sound = "woof"
     ]
     ```
 
     You can also use compact form of records as below:
     ```fuml
     animals = [
-        {name = 'Cat'; sound = 'meow'}
-        {name = 'Dog'; sound='woof'}
+        {name = "Cat"; sound = "meow"}
+        {name = "Dog"; sound="woof"}
     ]
     ```
     * If one record is written in compact form, others too must follow the same pattern.
@@ -439,17 +439,17 @@ FUML (acronym for **Fu**nctional **M**inimal **L**anguage) is a data serializati
 
 * Map to a record:
     ```fuml
-    'Cat' => 
-        family = 'Felidae'
-        sound = 'meow'
-    'Dog' => 
-        family = 'Canidae'
-        sound = 'woof'
+    "Cat" => 
+        family = "Felidae"
+        sound = "meow"
+    "Dog" => 
+        family = "Canidae"
+        sound = "woof"
     ```
 
     Compact form:
     ```
-    {'Cat' => {family='Felidae';sound='meow'};'Dog'=>{family='Canidae' ; sound = 'woof'}}
+    {"Cat" => {family="Felidae";sound="meow"};"Dog"=>{family="Canidae" ; sound = "woof"}}
     ```
 
 #### Generic records
@@ -479,7 +479,7 @@ FUML (acronym for **Fu**nctional **M**inimal **L**anguage) is a data serializati
     ```fuml
     propertyA = 
         valueA = 12
-        valueB = 'some string'
+        valueB = "some string"
     propertyB = 
         valueA = 4.5
         valueB = 100
@@ -657,7 +657,7 @@ To implement it, you can define `Shape` as a sum type:
     ```
 
     ```fuml
-    Error 'error happened'
+    Error "error happened"
     ```
 
     Corresponding schema:
@@ -694,7 +694,7 @@ To implement it, you can define `Shape` as a sum type:
 
 * Using incorrect date or time format with a given Format type must throw an error during deserialization. For example, the following will result in an error:
     ```fuml
-    UtcDateTime '1996-12-19'
+    UtcDateTime "1996-12-19"
     ```
 
     Corresponding schema:
@@ -707,7 +707,7 @@ To implement it, you can define `Shape` as a sum type:
 * Oftentimes, we don't accept multiple date-time formats. To specify which format to accept, you can use fully qualified name of Format type as the data type. 
 For example, if you want to use OffsetDateTime as the format, you can do so as follows:
     ```fuml
-    '1996-12-19T16:39:57-08:00'
+    "1996-12-19T16:39:57-08:00"
     ```
 
     Corresponding schema:
@@ -726,7 +726,7 @@ For example, if you want to use OffsetDateTime as the format, you can do so as f
 * You can use type alias to rename a type.
 * Example:
     ```fuml
-    (50, 'Jay')
+    (50, "Jay")
     ```
 
     Corresponding schema:
@@ -845,16 +845,16 @@ For example, if you want to use OffsetDateTime as the format, you can do so as f
     
     * For example, if you want to compile `NamespaceA` schemas, then `NamespaceB` schemas, followed by `SchemaB.fuml` and `SchemaA.fuml` in root namespace, the `base.fuml` contents would look like:
         ```fuml
-        compile 'NamespaceB'
-        compile 'NamespaceA'
-        compile 'SchemaB.fuml'
-        compile 'SchemaA.fuml'
+        compile "NamespaceB"
+        compile "NamespaceA"
+        compile "SchemaB.fuml"
+        compile "SchemaA.fuml"
         ```
 
     * Schemas in `NamespaceB` and `NamespaceA` in the above example would be compiled in alphabetical order. If you want to change the order of compilation for `NamespaceB`, you need to explicitly specify the order for all files in the namespace:
         ```fuml
-        compile 'NamespaceB.SchemaD.fuml'
-        compile 'NamespaceB.SchemaC.fuml'
+        compile "NamespaceB.SchemaD.fuml"
+        compile "NamespaceB.SchemaC.fuml"
         ```
 
 ### Import schemas
@@ -872,9 +872,9 @@ For example, if `SchemaB` is a schema stored in `SchemaB.fuml` file, and `Schema
 
     provided the `base.fuml` file compiles `SchemaB` and `SchemaC` before `ComplexType`:
     ```fuml
-    compile 'NamespaceA'
-    compile 'SchemaB'
-    compile 'ComplexType'
+    compile "NamespaceA"
+    compile "SchemaB"
+    compile "ComplexType"
     ```
 
 * If the schemas are not compiled before importing them, then it would result in a compilation error.
@@ -905,14 +905,14 @@ But what if you want to use some default value when a property is missing? To al
     type Fruit = 
         name: string
         producer: string
-            default = 'Fruit company'
+            default = "Fruit company"
         (price per kg): float
             default = 4.0
 
     data: Fruit
     ```
 
-    In this schema, `name` property is required as there's no default value defined for it, while as `producer` and `(price per kg)` properties are optional. If `producer` is missing, its value would be `'Fruit company'`, while as if `(price per kg)` is missing then its value would be `4.0`.
+    In this schema, `name` property is required as there's no default value defined for it, while as `producer` and `(price per kg)` properties are optional. If `producer` is missing, its value would be `"Fruit company"`, while as if `(price per kg)` is missing then its value would be `4.0`.
 
 # License
 
