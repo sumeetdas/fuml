@@ -3,6 +3,16 @@ FUML (acronym for **Fu**nctional **M**inimal **L**anguage) is a data serializati
 
 Data serialization language is a language which can be used to represent data and then can be translated into multiple programming languages. Think of FUML as combination of [Protocol Buffers](https://developers.google.com/protocol-buffers) and [YAML](https://yaml.org/). It prescribes how the data would look like and how to describe the data using [type theory](https://en.wikipedia.org/wiki/Type_theory).
 
+# Problems that I want to solve
+
+* I like type theory and started looking for data serialization formats that allowed its use. I did not find any, so came up with a new language.
+
+* I don't like YAML colon separator between property name and its value, and the use of hyphen for lists. I don't find TOML's `[table]` syntax that appealing. F# has a nice syntax for records and lists so adopted it in FUML.
+
+* I wanted a format which gave the user a choice between using whitespace to cleanly represent data and a compact alternative format.
+
+* In many places, I found lack of config files to explain and validate the properties extremely annoying. I wanted a language which forces schema design from the get go and not just an after thought.
+
 # Goals
 
 * FUML should be easily readable by humans
@@ -77,8 +87,8 @@ Data serialization language is a language which can be used to represent data an
     ```
 
 ### Integer
-* In FUML, integers are natural numbers. 
-    * Natural numbers are any number (positive or negative) which does not have any fraction part. Thus, `-12` is a natural number while as `12.40` is not.
+* In FUML, integers are numbers without any fraction part. 
+    * For example, `-12` is an integer while as `12.40` is not.
 * FUML has following data types:
     * `i8`
         * Range = -128 to 127
