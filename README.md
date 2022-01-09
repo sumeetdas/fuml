@@ -309,7 +309,7 @@ Data serialization language is a language which can be used to represent data an
     * Map pairs are represented as `<key> => <value>`
     * Pairs are modeled as tuples, hence the data type above for each pair is `(string * int)`
 
-* Only integer, float and string data types are allowed for map keys. Using any other data type should throw a compilation error [TODO: subject to change].
+* Only integer and string data types are allowed for map keys. Using any other data type should throw a compilation error [TODO: subject to change].
 
 * Difference between a map of key-value pairs and a similar list of pairs is that in a map, duplicate keys are not allowed. Thus, the following should throw an error during deserialization:
     ```fuml
