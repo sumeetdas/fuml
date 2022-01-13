@@ -249,14 +249,13 @@ Data serialization language is a language which can be used to represent data an
 
     data: int list
     ```
-    * Space between comma is not required, but recommended.
     * List types are written in postfix notation. `int list` is equivalent to `List<Integer>` in Java.
 
 * List elements can also be written in compact form as below:
     ```fuml
     [1, 2, 3]
     ```
-
+    * Space between comma is not required, but recommended.
     * Values in list, if on the same line, are separated by comma.
 
 * You can mix-and-match separating values via comma and writing them in new lines:
@@ -309,7 +308,7 @@ Data serialization language is a language which can be used to represent data an
     * Map pairs are represented as `<key> => <value>`
     * Pairs are modeled as tuples, hence the data type above for each pair is `(string * int)`
 
-* Only integer and string data types are allowed for map keys. Using any other data type should throw a compilation error [TODO: subject to change].
+* Only integer, string and [enum](#enum) data types are allowed for map keys. Using any other data type should throw a compilation error.
 
 * Difference between a map of key-value pairs and a similar list of pairs is that in a map, duplicate keys are not allowed. Thus, the following should throw an error during deserialization:
     ```fuml
@@ -327,7 +326,7 @@ Data serialization language is a language which can be used to represent data an
 
 * Maps can also be written in compact form as below:
     ```fuml
-    {"Thousand"=>1_000;"Million"=>1_000_000}
+    {"Thousand"=>1_000,"Million"=>1_000_000}
     ```
 
 ### Record
@@ -351,7 +350,7 @@ Data serialization language is a language which can be used to represent data an
 
 * Records can also be written in compact form:
     ```fuml
-    {name="Sumeet Das";username="sumeetdas"}
+    {name="Sumeet Das",username="sumeetdas"}
     ```
 
 * FUML recommendations for naming record types:
@@ -406,7 +405,7 @@ Data serialization language is a language which can be used to represent data an
     [
         name = "Cat"
         sound = "meow"
-        ;
+        ,
         name = "Dog"
         sound = "woof"
     ]
@@ -414,7 +413,7 @@ Data serialization language is a language which can be used to represent data an
 
     Compact form:
     ```fuml
-    [{name="Cat";sound="meow"};{name="Dog";sound="woof"}]
+    [{name="Cat",sound="meow"},{name="Dog",sound="woof"}]
     ```
 
     Corresponding schema:
@@ -433,7 +432,7 @@ Data serialization language is a language which can be used to represent data an
     animals = [
         name = "Cat"
         sound = "meow"
-        ;
+        ,
         name = "Dog"
         sound = "woof"
     ]
@@ -442,12 +441,12 @@ Data serialization language is a language which can be used to represent data an
     You can also use compact form of records as below:
     ```fuml
     animals = [
-        {name = "Cat"; sound = "meow"}
-        {name = "Dog"; sound="woof"}
+        {name = "Cat", sound = "meow"}
+        {name = "Dog", sound="woof"}
     ]
     ```
     * If one record is written in compact form, others too must follow the same pattern.
-    * Compact form records don't need semicolon `;` in between if they are written in separate lines.
+    * Compact form records don't need comma `,` in between if they are written in separate lines.
 
 * Map to a record:
     ```fuml
@@ -461,7 +460,7 @@ Data serialization language is a language which can be used to represent data an
 
     Compact form:
     ```
-    {"Cat" => {family="Felidae";sound="meow"};"Dog"=>{family="Canidae" ; sound = "woof"}}
+    {"Cat" => {family="Felidae",sound="meow"},"Dog"=>{family="Canidae" , sound = "woof"}}
     ```
 
 #### Generic records
@@ -607,6 +606,55 @@ To implement it, you can define `Shape` as a sum type:
             propertyA: int option
         ```
     * The above schema defines a property named `propertyA` which is an integer `Option`. This means the property can accept either `Some <integer-value>` or `None`.
+
+### Enum 
+
+* Enums are a variant of sum types which do not accept any parameters. 
+* They are similar to enums in C and can be treated as constants.
+* For example, suppose you want to define a type which would accept only a select few colors. You can define enum type called `Color` as follows:
+    ```fuml
+    <schema>
+
+    enum Color = 
+        | Red
+        | Green
+        | Blue
+    
+    data: Color
+    ```
+
+    * Enums are defined using keyword `enum`. Rest of the syntax is similar to sum type.
+    * The above type `Color` only accepts `Red`, `Green` and `Blue`. So, the following FUML document is allowed:
+
+        ```fuml
+        Red
+        ```
+
+        while as any other type would result in runtime error:
+
+        ```fuml
+        Yellow
+        ```
+
+* You can also define a map from enum to another data type. For example, to map colors to hex values, you can define a type as follows:
+    ```fuml
+    <schema>
+
+    enum Color = 
+        | Red
+        | Green
+        | Blue
+    
+    data: (enum * string) map
+    ```
+    
+    which will accept a map as follows:
+
+    ```fuml
+    Red => '#FF0000'
+    Green => '#00FF00'
+    Blue => '#0000FF'
+    ```
 
 ### Option
 
