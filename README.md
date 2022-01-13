@@ -585,7 +585,7 @@ To implement it, you can define `Shape` as a sum type:
     data: Shape.NoShape
     ```
 
-    as `NoShape` type expects no parameters and hence makes no sense to use it as a data type.
+    as `NoShape` type expects no parameters and hence makes no sense to use it as a property's data type.
 
 #### Generic Sum Type
 
